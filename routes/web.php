@@ -14,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('main');
 });
+Route::post(
+    'pause-campaign',
+    'GoogleAdsApiController@pauseCampaignAction'
+);
+Route::match(
+    ['get', 'post'],
+    'show-report',
+    'GoogleAdsApiController@showReportAction'
+);
