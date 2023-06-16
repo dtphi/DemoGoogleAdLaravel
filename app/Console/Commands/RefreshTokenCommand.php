@@ -6,10 +6,6 @@ use Illuminate\Console\Command;
 use Google\Auth\CredentialsLoader;
 use Google\Auth\OAuth2;
 use Psr\Http\Message\ServerRequestInterface;
-use React\EventLoop\Loop;
-use React\Http\HttpServer;
-use React\Http\Message\Response;
-use React\Socket\SocketServer;
 use UnexpectedValueException;
 
 class RefreshTokenCommand extends Command
@@ -45,18 +41,15 @@ class RefreshTokenCommand extends Command
      */
     private const OAUTH2_CALLBACK_IP_ADDRESS = 'http://127.0.0.1';
 
-    public static function main()
+    /**
+     * The main process method to get refresh token for the google ads api credentials.
+     */
+    public function main()
     {
-        if (!class_exists(HttpServer::class)) {
-            echo 'Please install "react/http" package to be able to run this example';
-            exit(1);
-        }
-
         // To fill in the values below, generate a client ID and client secret from the Google Cloud
-        // Console (https://console.cloud.google.com) by creating credentials for either a web or
-        // desktop app OAuth client ID.
+        // Console (https://console.cloud.google.com) by creating credentials for either a web OAuth client ID.
         // If using a web application, add the following to its "Authorized redirect URIs":
-        //   http://127.0.0.1
+        // http://127.0.0.1
         print 'Enter your OAuth2 client ID here: ';
         $clientId = trim(fgets(STDIN));
 
