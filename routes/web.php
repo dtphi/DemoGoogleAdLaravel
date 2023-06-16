@@ -22,9 +22,13 @@ Route::match(
     'getCode',
     [GoogleAdsApiController::class, 'getCodeAction']
 );
+Route::get(
+    'create-campaign',
+    [GoogleAdsApiController::class, 'createCampaignAction']
+);
 Route::post(
     'pause-campaign',
-    'GoogleAdsApiController@pauseCampaignAction'
+    [GoogleAdsApiController::class, 'pauseCampaignAction']
 );
 Route::match(
     ['get', 'post'],

@@ -9,7 +9,7 @@ use App\Services\GoogleAds\GoogleAdsClientService as GadClient;
 
 class GoogleAdsApiController extends Controller
 {
-    private const CUSTOMER_ID = 'INSERT_CUSTOMER_ID_HERE';
+    private const CUSTOMER_ID = '1986165192';
 
     private static $REPORT_TYPE_TO_DEFAULT_SELECTED_FIELDS = [
         'campaign' => ['campaign.id', 'campaign.name', 'campaign.status'],
@@ -30,6 +30,18 @@ class GoogleAdsApiController extends Controller
         dd($str . $request->input('code'));
 
         return;
+    }
+
+    /** */
+    public function createCampaignAction(
+        Request $request,
+        GadClient $gadsClient
+    ) {
+        $customerId = $request->input('customerId');
+        $response = $gadsClient->createCampaign($customerId);
+        $response['added_campaign_count'] = $response['added_campaign_result']->count();
+
+        dd('Added campaigns count: ' . $response['added_campaign_count'] . '| budget_rource_name:' . $response['budget_rource_name']);
     }
 
     /**
