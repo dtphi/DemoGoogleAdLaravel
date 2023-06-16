@@ -48,10 +48,9 @@ RUN apt-get update \
 
 # Install and configure the gRPC extension.
 RUN pecl install grpc
-RUN echo 'extension=grpc.so' >> $PHP_INI_DIR/conf.d/grpc.ini
 
 # Install and configure the C implementation of Protobuf extension if needed.
-RUN if [ "$USE_C_PROTOBUF" = "false" ]; then echo 'Using PHP implementation of Protobuf'; else echo 'Using C implementation of Protobuf'; pecl install protobuf; echo 'extension=protobuf.so' >> $PHP_INI_DIR/conf.d/protobuf.ini; fi
+# RUN if [ "$USE_C_PROTOBUF" = "false" ]; then echo 'Using PHP implementation of Protobuf'; else echo 'Using C implementation of Protobuf'; pecl install protobuf; fi
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.2
 

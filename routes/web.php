@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleAdsApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('main');
 });
+Route::match(
+    ['get', 'post'],
+    'getCode',
+    [GoogleAdsApiController::class, 'getCodeAction']
+);
 Route::post(
     'pause-campaign',
     'GoogleAdsApiController@pauseCampaignAction'
@@ -23,5 +29,5 @@ Route::post(
 Route::match(
     ['get', 'post'],
     'show-report',
-    'GoogleAdsApiController@showReportAction'
+    [GoogleAdsApiController::class, 'showReportAction']
 );
