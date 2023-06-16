@@ -1,0 +1,82 @@
+{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v14.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": {
+              "queryError": "REQUESTED_METRICS_FOR_MANAGER"
+            },
+            "message": "Metrics cannot be requested for a manager account. To retrieve metrics, issue separate requests against each client account under the manager account."
+          }
+        ],
+        "requestId": "3sIYXh1uTJymwHpv7NXdFw"
+      }
+    ]
+  }
+
+  //
+  {
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v14.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": {
+              "requestError": "INVALID_CUSTOMER_ID"
+            },
+            "message": "Invalid customer ID '198-616-5192'."
+          }
+        ],
+        "requestId": "1cAOiy-vzTC2GN4PZU2L-A"
+      }
+    ]
+  }
+
+  //
+  {
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v14.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": {
+              "authorizationError": "USER_PERMISSION_DENIED"
+            },
+            "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header. See https://developers.google.com/google-ads/api/docs/concepts/call-structure#cid"
+          }
+        ],
+        "requestId": "v7HOyPYexUqKmyv8vrHRsA"
+      }
+    ]
+  }
+
+  //
+  {
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v14.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": {
+              "authorizationError": "USER_PERMISSION_DENIED"
+            },
+            "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header. See https://developers.google.com/google-ads/api/docs/concepts/call-structure#cid"
+          }
+        ],
+        "requestId": "hJWpOOVseR-XnmDoKBONGA"
+      }
+    ]
+  }

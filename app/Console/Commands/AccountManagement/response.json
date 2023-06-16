@@ -1,0 +1,72 @@
+// Error message.
+ApiException was thrown with message '{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "headerError": "INVALID_LOGIN_CUSTOMER_ID"
+                    },
+                    "message": "The login customer id header 'Optional[614-282-3423]' could not be validated."
+                }
+            ],
+            "requestId": "12BVXhlsFXZcJ8_OnkNDGw"
+        }
+    ]
+}'
+
+//
+ApiException was thrown with message '{
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "authorizationError": "USER_PERMISSION_DENIED"
+                    },
+                    "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header. See https:\/\/developers.google.com\/google-ads\/api\/docs\/concepts\/call-structure#cid"
+                }
+            ],
+            "requestId": "_6FUeO28GVT8xEs-3PGk8Q"
+        }
+    ]
+}'
+
+//
+ApiException was thrown with message '{
+    "message": "Request is missing required authentication credential. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https:\/\/developers.google.com\/identity\/sign-in\/web\/devconsole-project.",
+    "code": 16,
+    "status": "UNAUTHENTICATED",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "authenticationError": "CUSTOMER_NOT_FOUND"
+                    },
+                    "message": "No customer found for the provided customer id."
+                }
+            ],
+            "requestId": "craqFgsOHx6CEsw3DcmaPw"
+        }
+    ]
+}'
+
+// Api command: sail artisan app:googleads:create-customer
+// Test account : TestCampaign First | 282-734-8768
+Created a customer with resource name "customers/1986165192" under the manager account with customer ID 2827348768.
+
+// Api command: sail artisan app:googleads:list-accessible-customers
+Total results: 3
+Customer resource name: 'customers/7534521013'
+Customer resource name: 'customers/4391721813'
+Customer resource name: 'customers/2827348768'

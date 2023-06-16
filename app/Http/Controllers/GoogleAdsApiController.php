@@ -28,6 +28,9 @@ use Google\Ads\GoogleAds\V14\Services\GoogleAdsRow;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use Google\Ads\GoogleAds\Lib\V14\GoogleAdsClientBuilder;
+use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
+use App\Services\GoogleAds\GoogleAdsClientService as GadClient;
 
 class GoogleAdsApiController extends Controller
 {
@@ -63,8 +66,10 @@ class GoogleAdsApiController extends Controller
      */
     public function showReportAction(
         Request $request,
-        GoogleAdsClient $googleAdsClient
+        GadClient $gadsClient
     ): View {
+        $googleAdsClient = $gadsClient->getLoginClient();
+
         if ($request->method() === 'POST') {
             // Retrieves the form inputs.
             $customerId = $request->input('customerId');

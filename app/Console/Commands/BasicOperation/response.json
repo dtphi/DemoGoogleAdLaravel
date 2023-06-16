@@ -1,0 +1,176 @@
+// Documment: https://developers.google.com/google-ads/api/docs/campaigns/create-campaigns
+// Api command: sail artisan app:googleads:basic:get-campaigns
+
+// Account of the LaravelSampleApp email : Test Client First | 2827348768
+ApiException was thrown with message '{
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "authorizationError": "DEVELOPER_TOKEN_NOT_APPROVED"
+                    },
+                    "message": "The developer token is only approved for use with test accounts. To access non-test accounts, apply for Basic or Standard access."
+                }
+            ],
+            "requestId": "cdIfVZND2U6bwhryGlB8JA"
+        }
+    ]
+}'
+
+// Account different the LaravelSampleApp email: Test Client-3423 | 6388854029
+ApiException was thrown with message '{
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "authorizationError": "USER_PERMISSION_DENIED"
+                    },
+                    "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header. See https:\/\/developers.google.com\/google-ads\/api\/docs\/concepts\/call-structure#cid"
+                }
+            ],
+            "requestId": "b64EnwVM1CCa0Y2OOdUjfA"
+        }
+    ]
+}'
+
+// Account different the LaravelSampleApp email: Test Manager-01 | 6142823423
+// google_ads_php.ini : login_cucstomer_id=6142823423
+// CUSTOMER_ID : the above 6388854029
+ApiException was thrown with message '{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "headerError": "INVALID_LOGIN_CUSTOMER_ID"
+                    },
+                    "message": "The login customer id header 'Optional[614-282-3423]' could not be validated."
+                }
+            ],
+            "requestId": "gUrro2ymcMR3pyfYYNh1FQ"
+        }
+    ]
+}'
+
+// Api command: sail artisan app:googleads:basic:add-campaigns
+ApiException was thrown with message '{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "contextError": "OPERATION_NOT_PERMITTED_FOR_CONTEXT"
+                    },
+                    "message": "The operation is not allowed for the given context.",
+                    "location": {
+                        "fieldPathElements": [
+                            {
+                                "fieldName": "operations",
+                                "index": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "errorCode": {
+                        "campaignBudgetError": "NON_MULTIPLE_OF_MINIMUM_CURRENCY_UNIT"
+                    },
+                    "message": "A money amount was not a multiple of a minimum unit.",
+                    "trigger": {
+                        "int64Value": "500000"
+                    },
+                    "location": {
+                        "fieldPathElements": [
+                            {
+                                "fieldName": "operations",
+                                "index": 0
+                            },
+                            {
+                                "fieldName": "create"
+                            },
+                            {
+                                "fieldName": "amount_micros"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "requestId": "671NenxHzuLZlnEXXRRa4g"
+        }
+    ]
+}'
+//
+ApiException was thrown with message '{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "rangeError": "TOO_LOW"
+                    },
+                    "message": "Too low.",
+                    "trigger": {
+                        "int64Value": "0"
+                    },
+                    "location": {
+                        "fieldPathElements": [
+                            {
+                                "fieldName": "operations",
+                                "index": 0
+                            },
+                            {
+                                "fieldName": "create"
+                            },
+                            {
+                                "fieldName": "amount_micros"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "requestId": "7Y8WzCSMEXWt9utj1ROinw"
+        }
+    ]
+}'
+// Customer Id : 1986165192
+ApiException was thrown with message '{
+    "message": "The caller does not have permission",
+    "code": 7,
+    "status": "PERMISSION_DENIED",
+    "details": [
+        {
+            "@type": "type.googleapis.com\/google.ads.googleads.v14.errors.GoogleAdsFailure",
+            "errors": [
+                {
+                    "errorCode": {
+                        "authorizationError": "USER_PERMISSION_DENIED"
+                    },
+                    "message": "User doesn't have permission to access customer. Note: If you're accessing a client customer, the manager's customer id must be set in the 'login-customer-id' header. See https:\/\/developers.google.com\/google-ads\/api\/docs\/concepts\/call-structure#cid"
+                }
+            ],
+            "requestId": "bu-mpiRKy_gSkvZ2bllboQ"
+        }
+    ]
+}'
