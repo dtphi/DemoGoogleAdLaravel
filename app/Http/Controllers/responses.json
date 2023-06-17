@@ -80,3 +80,6 @@
       }
     ]
   }
+
+  // error auth
+  cURL error 6: Could not resolve host: oauth2.googleapis.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://oauth2.googleapis.com/token

@@ -33,6 +33,24 @@ class GoogleAdsApiController extends Controller
     }
 
     /** */
+    public function getCampaignAction(
+        Request $request,
+        GadClient $gadsClient
+    ) {
+        $customerId = $request->input('customerId');
+
+        // Creates a query that retrieves all campaigns.
+        $query = 'SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id';
+
+        $response = $gadsClient->getCampaign($customerId, $query);
+        $data['campaigns'] = $response;
+        $data['campaign_count'] = count($data['campaigns']);
+
+        echo 'List campaigns: ';
+        dd($data);
+    }
+
+    /** */
     public function createCampaignAction(
         Request $request,
         GadClient $gadsClient

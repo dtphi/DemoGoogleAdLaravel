@@ -16,6 +16,7 @@ use Google\Ads\GoogleAds\V14\Enums\BudgetDeliveryMethodEnum\BudgetDeliveryMethod
 use Google\Ads\GoogleAds\V14\Services\CampaignBudgetOperation;
 use Google\Ads\GoogleAds\V14\Enums\AdvertisingChannelTypeEnum\AdvertisingChannelType;
 use Google\Ads\GoogleAds\V14\Common\ManualCpc;
+use Google\Ads\GoogleAds\Lib\V14\GoogleAdsServerStreamDecorator;
 
 class GoogleAdsClientService
 {
@@ -209,5 +210,27 @@ class GoogleAdsClientService
         $addedBudget = $response->getResults()[0];
 
         return $addedBudget->getResourceName();
+    }
+
+    /**
+     * Get the campaigns in the specified client account.
+     * 
+     * @param int $customerId
+     * @param string $query
+     * @return array $data
+     */
+    public function getCampaign(int $customerId, string $query):array
+    {
+        // Issues a search stream request.
+        /** @var GoogleAdsServerStreamDecorator $stream */
+        $stream = $this->getInstance()->getGoogleAdsServiceClient()->searchStream($customerId, $query);
+
+        $data = [];
+        foreach ($stream->iterateAllElements() as $googleAdsRow) {
+            $data[]['id'] = $googleAdsRow->getCampaign()->getId();
+            $data[]['name'] = $googleAdsRow->getCampaign()->getName();
+        }
+
+        return $data;
     }
 }
