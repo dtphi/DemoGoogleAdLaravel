@@ -46,8 +46,9 @@ class GoogleAdsApiController extends Controller
         $data['campaigns'] = $response;
         $data['campaign_count'] = count($data['campaigns']);
 
-        echo 'List campaigns: ';
-        dd($data);
+        return view(
+            'list-result', ['data' => $data]
+        );
     }
 
     /** */

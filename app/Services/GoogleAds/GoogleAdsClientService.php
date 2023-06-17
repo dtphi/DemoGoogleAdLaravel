@@ -227,8 +227,10 @@ class GoogleAdsClientService
 
         $data = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
-            $data[]['id'] = $googleAdsRow->getCampaign()->getId();
-            $data[]['name'] = $googleAdsRow->getCampaign()->getName();
+            $data[] = [
+                'id' => $googleAdsRow->getCampaign()->getId(),
+                'name' => $googleAdsRow->getCampaign()->getName()
+            ];
         }
 
         return $data;
