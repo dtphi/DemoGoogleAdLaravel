@@ -1,7 +1,10 @@
 ## Run the application by terminal
-- $ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+- $ composer install
+- $ ./vendor/bin/sail up -d
 
-- $ sail up -d
+## Alias sail
+- $ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+- $ sail
 
 ## Get refresh token for the credentials by terminal
 - $ sail artisan app:googleads:refresh-token-command
