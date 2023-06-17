@@ -17,6 +17,7 @@ use Google\Ads\GoogleAds\V14\Services\CampaignBudgetOperation;
 use Google\Ads\GoogleAds\V14\Enums\AdvertisingChannelTypeEnum\AdvertisingChannelType;
 use Google\Ads\GoogleAds\V14\Common\ManualCpc;
 use Google\Ads\GoogleAds\Lib\V14\GoogleAdsServerStreamDecorator;
+use Google\Ads\GoogleAds\Lib\Configuration;
 
 class GoogleAdsClientService
 {
@@ -33,12 +34,26 @@ class GoogleAdsClientService
         return $this->gadsClient;
     }
 
+    public function configuration()
+    {
+        $config = config('googleads');
+        return new Configuration($config);
+    }
+
+    /**
+     * Return the config info of gooogle ads.
+     */
+    public function getGoogleAdsConfig()
+    {
+        return config('googleads');
+    }
+
     /**
      * Check OAuth2
      */
     public function getLoginClient()
     {
-        $gadsConfig = config()->get('googleads');
+        $gadsConfig = $this->getGoogleAdsConfig();
         $oAuth2Builder = (new OAuth2TokenBuilder())
             ->withClientId($gadsConfig['OAUTH2']['clientId'])
             ->withClientSecret($gadsConfig['OAUTH2']['clientSecret'])
