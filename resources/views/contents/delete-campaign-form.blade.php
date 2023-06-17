@@ -1,9 +1,9 @@
-<div class="card">
+<div class="card mt-3">
     <div class="card-header">
-        Pause a campaign of the specified customer ID
+        Delete a campaign of the specified customer ID
     </div>
     <div class="card-body">
-        <form action="{{ url('pause-campaign') }}" method="POST">
+        <form action="{{ url('delete-campaign') }}" method="POST">
             {{ csrf_field() }}
             <div class="form-group row">
                 <label for="customerId" class="col-sm-2 col-form-label">Customer ID</label>
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <button type="submit" class="btn btn-primary">Pause Campaign</button>
+                    <button type="submit" class="btn btn-danger">Delete Campaign</button>
                 </div>
             </div>
         </form>

@@ -240,4 +240,35 @@ class GoogleAdsApiController extends Controller
             compact('customerId', 'campaign')
         );
     }
+
+    /**
+     * Controls a POST request submitted in the context of the "Delete Campaign" form.
+     *
+     * @param Request $request the HTTP request
+     * @param GoogleAdsClientService $gadsClient the Google Ads API client
+     * @return View the view to redirect to after processing
+     */
+    public function deleteCampaignAction(
+        Request $request,
+        GadClient $gadsClient
+    ): View {
+        // Retrieves the form inputs.
+        $customerId = $request->input('customerId')??0;
+        $campaignId = $request->input('campaignId')??0;
+
+        if ($request->input('test') || ($customerId == 0)) {
+            $data['customerId'] = 1112223344;
+            $data['campaignName'] = 'Campaign name 1';
+        } 
+        
+        if ($request->method() === 'POST') {
+            $data['customerId'] = $customerId;
+            $removedCampaign = $gadsClient->deleteCampaign($customerId, $campaignId);
+            $data['campaignName'] = $removedCampaign->getResourceName();
+        }
+
+        return view(
+            'delete-result', ['data' => $data]
+        );
+    }
 }

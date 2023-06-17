@@ -30,6 +30,10 @@ Route::get(
     'get-campaign',
     [GoogleAdsApiController::class, 'getCampaignAction']
 );
+Route::get(
+    'delete-campaign',
+    [GoogleAdsApiController::class, 'deleteCampaignAction']
+);
 Route::post(
     'pause-campaign',
     [GoogleAdsApiController::class, 'pauseCampaignAction']

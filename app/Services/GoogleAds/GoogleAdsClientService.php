@@ -233,4 +233,30 @@ class GoogleAdsClientService
 
         return $data;
     }
+
+    /**
+     * Delete the campaigns in the specified client account.
+     * 
+     * @param int $customerId
+     * @param int $campaignId
+     * @return object $removedCampaign
+     */
+    public function deleteCampaign(int $customerId, int $campaignId):object
+    {
+        // Creates the resource name of a campaign to remove.
+        $campaignResourceName = ResourceNames::forCampaign($customerId, $campaignId);
+
+        // Creates a campaign operation.
+        $campaignOperation = new CampaignOperation();
+        $campaignOperation->setRemove($campaignResourceName);
+
+        // Issues a mutate request to remove the campaign.
+        $campaignServiceClient = $this->getInstance()->getCampaignServiceClient();
+        $response = $campaignServiceClient->mutateCampaigns($customerId, [$campaignOperation]);
+
+        /** @var Campaign $removedCampaign */
+        $removedCampaign = $response->getResults()[0];
+
+        return $removedCampaign;
+    }
 }

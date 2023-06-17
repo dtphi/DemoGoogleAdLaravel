@@ -1,4 +1,5 @@
 ## Run the application by terminal
+- $ cd LaravelSampleApp
 - $ composer install
 - $ ./vendor/bin/sail up -d
 
