@@ -29,7 +29,9 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "App\\Http\\Controllers\\Api\\": "app/Http/Controllers/Api/v1/"
+            "App\\Http\\Controllers\\Api\\": "app/Http/Controllers/Api/v1/",
+            "App\\Services\\Api\\": "app/Services/Api/v1/",
+            "App\\Repositories\\Api\\": "app/Repositories/Api/v1/"
         }
     },
     "autoload-dev": {

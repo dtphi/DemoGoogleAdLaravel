@@ -169,6 +169,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        App\Services\Api\Users\UserServiceProvider::class,
+
         App\Providers\AppGoogleAdsServiceProvider::class,
     ])->toArray(),
 

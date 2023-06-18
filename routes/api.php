@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Users\LoginApi as UserLogin;
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,8 @@ use App\Http\Controllers\Api\Users\LoginApi as UserLogin;
 */
 // sail composer dumpautoload
 Route::post('/v1/user-login', [UserLogin::class, 'login'])->name('login');
+
+Route::apiResource('/v1/users', UserController::class);
 
 Route::middleware('auth:api')->get('/v1/user', function (Request $request) {
     return response()->json([
