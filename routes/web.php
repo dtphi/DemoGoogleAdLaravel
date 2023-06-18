@@ -22,7 +22,7 @@ Route::match(
     'getCode',
     [GoogleAdsApiController::class, 'getCodeAction']
 );
-Route::get(
+Route::post(
     'create-campaign',
     [GoogleAdsApiController::class, 'createCampaignAction']
 );

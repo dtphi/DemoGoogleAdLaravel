@@ -57,10 +57,18 @@ class GoogleAdsApiController extends Controller
         GadClient $gadsClient
     ) {
         $customerId = $request->input('customerId');
-        $response = $gadsClient->createCampaign($customerId);
-        $response['added_campaign_count'] = $response['added_campaign_result']->count();
+        $data['customerId'] = $customerId;
 
-        dd('Added campaigns count: ' . $response['added_campaign_count'] . '| budget_rource_name:' . $response['budget_rource_name']);
+        if ($request->method() === 'POST') {
+            $response = $gadsClient->createCampaign($customerId);
+
+            $data['addedCampaignCount'] = $response['added_campaign_result']->count();
+            $data['budgetRourceName'] = $response['budget_rource_name'];
+        }
+
+        return view(
+            'create-result', ['data' => $data]
+        );
     }
 
     /**
