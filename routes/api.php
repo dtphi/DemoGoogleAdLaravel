@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\Users\LoginApi as UserLogin;
 |
 */
 // sail composer dumpautoload
-Route::post('/v1/user-login', [UserLogin::class, 'login'])->name('user.login');
+Route::post('/v1/user-login', [UserLogin::class, 'login'])->name('login');
 
 Route::middleware('auth:api')->get('/v1/user', function (Request $request) {
     return response()->json([

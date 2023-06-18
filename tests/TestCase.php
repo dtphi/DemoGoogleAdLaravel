@@ -12,4 +12,21 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
     }
+
+    /**
+     * @param string $accessToken
+     */
+    public function authorizeAccessToken(string $email, string $password): string
+    {
+        $response = $this->post('/api/v1/user-login', [
+            'email' => $email,
+            'password' => $password
+        ]);
+
+        $accessToken = $response->json('accessToken');
+
+        $this->withHeader('Authorization', 'Bearer ' . $accessToken);
+
+        return $accessToken;
+    }
 }

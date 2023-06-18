@@ -23,7 +23,7 @@ class LoginApi extends Controller
         $user->email = $email;
         $user->password = $pass;
 
-        $token = $user->createToken('User Api Login')->accessToken;
+        $token = $user->createToken('LaravelSampleAppTest')->accessToken;
 
         return response()->JSON([
             'userEmail' => $user->email,

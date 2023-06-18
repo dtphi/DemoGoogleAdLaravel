@@ -4,6 +4,7 @@ namespace Tests\Feature\Api\V1\Users;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -29,18 +30,20 @@ class LoginTest extends TestCase
      */
     public function test_get_user(): void
     {
-        $response = $this->post('/api/v1/user-login', [
-            'email' => 'user.test@gmail.com',
-            'password' => '12345678'
-        ]);
+        $email = 'user.test@gmail.com';
+        $pass = '12345678';
 
-        $accessToken = $response->json('accessToken');
+        $accessToken = $this->authorizeAccessToken($email, $pass);
 
-        $headers = [
-            'Accept'        => 'application/json',
+        $response = $this->get('/api/v1/user');
+
+        $response->assertRedirect(route('login'));
+
+        /*$headers = [
+            'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $accessToken,
         ];
-
-        //$response = $this->get('/api/user', [], $headers);
+        $response = Http::withHeaders($headers)->get('http://localhost/api/v1/user');
+        $result = $response->json();*/
     }
 }
