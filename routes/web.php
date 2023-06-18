@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleAdsApiController;
+use App\Http\Controllers\Api\Users\LoginApi as UserLogin;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,7 @@ use App\Http\Controllers\GoogleAdsApiController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('test-get-accesstoken-api', [UserLogin::class, 'login']);
 Route::get('/', function () {
     return view('main');
 });

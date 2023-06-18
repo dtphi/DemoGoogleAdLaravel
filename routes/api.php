@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Users\LoginApi as UserLogin;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+// sail composer dumpautoload
+Route::post('/v1/user-login', [UserLogin::class, 'login'])->name('user.login');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->get('/v1/user', function (Request $request) {
+    return response()->json([
+        'status' => 1,
+        'message' => 'successfull'
+    ]);
 });
