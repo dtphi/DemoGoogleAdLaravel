@@ -15,8 +15,8 @@ class LoginTest extends TestCase
     public function test_get_accesstoken(): void
     {
         $response = $this->post('/api/v1/user-login', [
-            'email' => 'user.test@gmail.com',
-            'password' => '12345678'
+            'email' => 'kameron91@example.com',
+            'password' => 'password'
         ]);
 
         $response->assertStatus(200);
@@ -30,14 +30,18 @@ class LoginTest extends TestCase
      */
     public function test_get_user(): void
     {
-        $email = 'user.test@gmail.com';
-        $pass = '12345678';
-
-        $accessToken = $this->authorizeAccessToken($email, $pass);
-
         $response = $this->get('/api/v1/user');
 
-        $response->assertRedirect(route('login'));
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'status',
+            'message'
+        ]);
+        $response->assertJson([
+            'status' => 1,
+            'message' => 'successfull'
+        ]);
+        //$response->assertRedirect(route('login'));
 
         /*$headers = [
             'Accept' => 'application/json',

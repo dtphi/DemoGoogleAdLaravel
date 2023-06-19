@@ -25,4 +25,12 @@ final class Constants
             ],
         ];
     }
+
+    public static function userApiCredential()
+    {
+        return [
+            'email' => 'kameron91@example.com',
+            'password' => 'password'
+        ];
+    }
 }

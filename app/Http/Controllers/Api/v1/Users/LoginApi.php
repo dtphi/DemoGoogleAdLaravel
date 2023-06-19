@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Auth;
 
 class LoginApi extends Controller
 {
@@ -15,20 +16,18 @@ class LoginApi extends Controller
      */
     public function login(Request $request)
     {
-        $email = $request->input('email');
-        $pass = $request->input('password');
+        $json['email'] = $request->input('email');
+        $json['accessToken'] = '';
 
-        $user = new User();
-        $user->name = "Test user";
-        $user->email = $email;
-        $user->password = $pass;
+        try {
+            Auth::attempt($request->all()); 
+            $user = Auth::user();
 
-        $token = $user->createToken('LaravelSampleAppTest')->accessToken;
+            $json['accessToken'] = $user->createToken('LaravelSampleAppTest')->accessToken;
+        } catch (\Exception $e) {
+            $json['error'] = $e->getMessage();
+        }
 
-        return response()->JSON([
-            'userEmail' => $user->email,
-            'userName' => $user->name,
-            'accessToken' => $token
-        ]);
+        return response()->JSON($json);
     }
 }

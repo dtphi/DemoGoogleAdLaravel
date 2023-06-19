@@ -11,6 +11,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void 
     {
         parent::setUp();
+        $userCredential = Constants::userApiCredential();
+        $this->authorizeAccessToken($userCredential['email'], $userCredential['password']);
     }
 
     /**
