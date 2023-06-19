@@ -50,7 +50,7 @@ RUN apt-get update \
 RUN pecl install grpc
 
 # Install and configure the C implementation of Protobuf extension if needed.
-# RUN if [ "$USE_C_PROTOBUF" = "false" ]; then echo 'Using PHP implementation of Protobuf'; else echo 'Using C implementation of Protobuf'; pecl install protobuf; fi
+RUN pecl install protobuf
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.2
 
