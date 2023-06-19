@@ -10,7 +10,7 @@
             <a href="https://developers.google.com/google-ads/api/docs/reporting/zero-impressions">zero-impression</a>
             for the sake of brevity.
         </div>
-        <form action="{{ url('show-report') }}" method="POST">
+        <form action="/show-report" method="POST">
             {{ csrf_field() }}
             <div class="form-group row">
                 <label for="customerId" class="col-sm-2 col-form-label">Customer ID</label>

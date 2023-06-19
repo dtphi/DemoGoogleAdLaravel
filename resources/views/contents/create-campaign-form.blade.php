@@ -3,7 +3,7 @@
         Create campaigns of the specified customer ID
     </div>
     <div class="card-body">
-        <form action="{{ url('create-campaign') }}" method="POST">
+        <form action="/create-campaign" method="POST">
             {{ csrf_field() }}
             <div class="form-group row">
                 <label for="customerId" class="col-sm-2 col-form-label">Customer ID</label>

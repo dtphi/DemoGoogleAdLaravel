@@ -3,7 +3,7 @@
         Pause a campaign of the specified customer ID
     </div>
     <div class="card-body">
-        <form action="{{ url('pause-campaign') }}" method="POST">
+        <form action="pause-campaign" method="POST">
             {{ csrf_field() }}
             <div class="form-group row">
                 <label for="customerId" class="col-sm-2 col-form-label">Customer ID</label>

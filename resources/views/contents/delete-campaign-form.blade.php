@@ -3,7 +3,7 @@
         Delete a campaign of the specified customer ID
     </div>
     <div class="card-body">
-        <form action="{{ url('delete-campaign') }}" method="POST">
+        <form action="/delete-campaign" method="POST">
             {{ csrf_field() }}
             <div class="form-group row">
                 <label for="customerId" class="col-sm-2 col-form-label">Customer ID</label>
