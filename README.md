@@ -16,7 +16,7 @@
 ## Test
 - $ sail artisan migrate --env=testing
 - $ sail artisan passport:client --personal --env=testing
-- $ sail php artisan test --testsuite=Feature
+- $ sail artisan test --testsuite=Feature
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 

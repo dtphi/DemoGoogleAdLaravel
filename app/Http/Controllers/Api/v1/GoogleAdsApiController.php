@@ -20,6 +20,10 @@ class GoogleAdsApiController extends Controller
 
     private const RESULTS_LIMIT = 100;
 
+    public function __construct(
+        private GadClient $gadSv
+    ){}
+
     /**
      * Controls a GET request call api
      *
@@ -30,9 +34,9 @@ class GoogleAdsApiController extends Controller
      */
     public function getCampaignAction(
         CampaignRequest $request,
-        GadClient $gadsClient,
         int $customerId
     ) {
+        $gadsClient = $this->gadSv;
         // Creates a query that retrieves all campaigns.
         $query = 'SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id';
 
@@ -61,9 +65,10 @@ class GoogleAdsApiController extends Controller
      */
     public function createCampaignAction(
         CampaignRequest $request,
-        GadClient $gadsClient,
         int $customerId
     ) {
+        $gadsClient = $this->gadSv;
+
         $json['customerId'] = $customerId;
         $json['addedCampaignCount'] = 0;
         $json['budgetRourceName'] = '';
@@ -94,9 +99,10 @@ class GoogleAdsApiController extends Controller
      */
     public function showReportAction(
         CampaignRequest $request,
-        GadClient $gadsClient,
         int $customerId
     ) {
+        $gadsClient = $this->gadSv;
+
         // Retrieves the form inputs.
         $reportType = $request->input('reportType')??'campaign';
         $reportRange = $request->input('reportRange');
@@ -214,10 +220,11 @@ class GoogleAdsApiController extends Controller
      */
     public function pauseCampaignAction(
         CampaignRequest $request,
-        GadClient $gadsClient,
         int $customerId,
         int $campaignId
     ) {
+        $gadsClient = $this->gadSv;
+
         $json['customerId'] = $customerId;
 
         try {
@@ -263,10 +270,11 @@ class GoogleAdsApiController extends Controller
      */
     public function deleteCampaignAction(
         CampaignRequest $request,
-        GadClient $gadsClient,
         int $customerId,
         int $campaignId
     ) {
+        $gadsClient = $this->gadSv;
+
         if ($request->method() === 'POST') {
             $json['customerId'] = $customerId;
             try {

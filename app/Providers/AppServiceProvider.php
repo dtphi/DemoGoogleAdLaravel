@@ -13,6 +13,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Passport::ignoreRoutes();
+
+        $this->app->bind(
+            \App\Models\Contacts\UserContact::class,
+            \App\Models\User::class
+        );
     }
 
     /**
