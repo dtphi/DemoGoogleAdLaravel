@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use App\Services\GoogleAds\GoogleAdsClientService as GadClient;
+use App\Http\Requests\GoogleAds\CampaignRequest;
 
 class GoogleAdsApiController extends Controller
 {
@@ -22,22 +23,27 @@ class GoogleAdsApiController extends Controller
     /**
      * Controls a GET request call api
      *
-     * @param Request $request the HTTP request
+     * @param CampaignRequest $request the HTTP request
      * @param GoogleAdsClientService $gadsClient the Google Ads API client
      * @param int $customerId
      * @return JSON the json to redirect to after processing
      */
     public function getCampaignAction(
-        Request $request,
+        CampaignRequest $request,
         GadClient $gadsClient,
         int $customerId
     ) {
         // Creates a query that retrieves all campaigns.
         $query = 'SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id';
 
-        $response = $gadsClient->getCampaign($customerId, $query);
+        $json['campaigns'] = [];
+        try {
+            $response = $gadsClient->getCampaign($customerId, $query);
+            $json['campaigns'] = $response;
+        } catch (\Exception $e) {
+            $json['errors']['ER_001'] = $e->getMessage();
+        }
 
-        $json['campaigns'] = $response;
         $json['campaign_count'] = count($json['campaigns']);
 
         return response()->JSON([
@@ -48,23 +54,29 @@ class GoogleAdsApiController extends Controller
     /**
      * Controls a POST request call api create a default campaign
      *
-     * @param Request $request the HTTP request
+     * @param CampaignRequest $request the HTTP request
      * @param GoogleAdsClientService $gadsClient the Google Ads API client
      * @param int $customerId
      * @return JSON the json to redirect to after processing
      */
     public function createCampaignAction(
-        Request $request,
+        CampaignRequest $request,
         GadClient $gadsClient,
         int $customerId
     ) {
         $json['customerId'] = $customerId;
+        $json['addedCampaignCount'] = 0;
+        $json['budgetRourceName'] = '';
 
         if ($request->method() === 'POST') {
-            $response = $gadsClient->createCampaign($customerId);
+            try {
+                $response = $gadsClient->createCampaign($customerId);
 
-            $json['addedCampaignCount'] = $response['added_campaign_result']->count();
-            $json['budgetRourceName'] = $response['budget_rource_name'];
+                $json['addedCampaignCount'] = $response['added_campaign_result']->count();
+                $json['budgetRourceName'] = $response['budget_rource_name'];
+            } catch (\Exception $e) {
+                $json['errors']['ER_001'] = $e->getMessage();
+            }
         }
 
         return response()->JSON([
@@ -75,76 +87,51 @@ class GoogleAdsApiController extends Controller
     /**
      * Controls a POST or GET request call api get report.
      *
-     * @param Request $request the HTTP request
+     * @param CampaignRequest $request the HTTP request
      * @param GoogleAdsClientService $gadsClient the Google Ads API client
      * @param int $customerId
      * @return JSON the json to redirect to after processing
      */
     public function showReportAction(
-        Request $request,
+        CampaignRequest $request,
         GadClient $gadsClient,
         int $customerId
     ) {
-        if ($request->method() === 'POST') {
-            // Retrieves the form inputs.
-            $reportType = $request->input('reportType');
-            $reportRange = $request->input('reportRange');
-            $entriesPerPage = $request->input('entriesPerPage');
+        // Retrieves the form inputs.
+        $reportType = $request->input('reportType')??'campaign';
+        $reportRange = $request->input('reportRange');
+        $entriesPerPage = $request->input('entriesPerPage');
 
-            // Retrieves the list of metric fields to select filtering out the static ones.
-            $selectedFields = array_values(
-                $request->except(
-                    [
-                        '_token',
-                        'customerId',
-                        'reportType',
-                        'reportRange',
-                        'entriesPerPage'
-                    ]
-                )
-            );
+        // Retrieves the list of metric fields to select filtering out the static ones.
+        $selectedFields = array_values(
+            $request->except(
+                [
+                    '_token',
+                    'customerId',
+                    'reportType',
+                    'reportRange',
+                    'entriesPerPage'
+                ]
+            )
+        );
 
-            // Merges the list of metric fields to the resource ones that are selected by default.
-            $selectedFields = array_merge(
-                self::$REPORT_TYPE_TO_DEFAULT_SELECTED_FIELDS[$reportType],
-                $selectedFields
-            );
+        // Merges the list of metric fields to the resource ones that are selected by default.
+        $selectedFields = array_merge(
+            self::$REPORT_TYPE_TO_DEFAULT_SELECTED_FIELDS[$reportType],
+            $selectedFields
+        );
 
-            // Builds the GAQL query.
-            $query = sprintf(
-                "SELECT %s FROM %s WHERE metrics.impressions > 0 AND segments.date " .
-                "DURING %s LIMIT %d",
-                join(", ", $selectedFields),
-                $reportType,
-                $reportRange,
-                self::RESULTS_LIMIT
-            );
+        // Builds the GAQL query.
+        $query = sprintf(
+            "SELECT %s FROM %s WHERE metrics.impressions > 0 AND segments.date " .
+            "DURING %s LIMIT %d",
+            join(", ", $selectedFields),
+            $reportType,
+            $reportRange,
+            self::RESULTS_LIMIT
+        );
 
-            // Initializes the list of page tokens. Page tokens are used to request specific pages
-            // of results from the API. They are especially useful to optimize navigation between
-            // pages as there is no need to cache all the results before displaying.
-            // More details can be found here:
-            // https://developers.google.com/google-ads/api/docs/reporting/paging.
-            //
-            // The first page's token is always an empty string.
-            $pageTokens = [''];
-
-            // Updates the session with all the information that is necessary to process any
-            // future requests (report result pages).
-            $request->session()->put('customerId', $customerId);
-            $request->session()->put('selectedFields', $selectedFields);
-            $request->session()->put('entriesPerPage', $entriesPerPage);
-            $request->session()->put('query', $query);
-            $request->session()->put('pageTokens', $pageTokens);
-        } else {
-            // Loads from the session all the information that is necessary to process any
-            // requests (report result page).
-            $customerId = $request->session()->get('customerId');
-            $selectedFields = $request->session()->get('selectedFields');
-            $entriesPerPage = $request->session()->get('entriesPerPage');
-            $query = $request->session()->get('query');
-            $pageTokens = $request->session()->get('pageTokens');
-        }
+        $pageTokens = [''];
 
         // Determines the number of the page to load (the first one by default).
         $pageNo = $request->input('page') ?: 1;
@@ -165,47 +152,51 @@ class GoogleAdsApiController extends Controller
                 $pageNo = count($pageTokens);
             }
         }
+        try {
+            // Fetches the actual page that we want to display the results of.
+            $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, $pageTokens[$pageNo - 1]);
+            
+            if ($response->getPage()->getNextPageToken()) {
+                // Stores the page token of the page that comes after the one we just fetched if any so
+                // that it can be reused later if necessary.
+                $pageTokens[] = $response->getPage()->getNextPageToken();
+            }
 
-        // Fetches the actual page that we want to display the results of.
-        $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, $pageTokens[$pageNo - 1]);
-        
-        if ($response->getPage()->getNextPageToken()) {
-            // Stores the page token of the page that comes after the one we just fetched if any so
-            // that it can be reused later if necessary.
-            $pageTokens[] = $response->getPage()->getNextPageToken();
+            // Determines the total number of results to display.
+            // The total results count does not take into consideration the LIMIT clause of the query
+            // so we need to find the minimal value between the limit and the total results count.
+            $totalNumberOfResults = min(
+                self::RESULTS_LIMIT,
+                $response->getPage()->getResponseObject()->getTotalResultsCount()
+            );
+
+            // Extracts the results for the requested page.
+            $results = [];
+            foreach ($response->getPage()->getIterator() as $googleAdsRow) {
+                /** @var Google\Ads\GoogleAds\V14\Services\GoogleAdsRow $googleAdsRow */
+                // Converts each result as a Plain Old PHP Object (POPO) using JSON.
+                $results[] = json_decode($googleAdsRow->serializeToJsonString(), true);
+            }
+
+            // Creates a length aware paginator to supply a given page of results for the view.
+            $paginatedResults = new LengthAwarePaginator(
+                $results,
+                $totalNumberOfResults,
+                $entriesPerPage,
+                $pageNo,
+                ['path' => url('show-report')]
+            );
+
+            // Updates the session with the known page tokens to avoid unnecessary requests during
+            // future page navigation.
+            $request->session()->put('pageTokens', $pageTokens);
+
+            $json['paginatedResults'] = $paginatedResults;
+            $json['selectedFields'] = $selectedFields;
+
+        } catch (\Exception $e) {
+            $json['errors']['ER_001'] = $e->getMessage();
         }
-
-        // Determines the total number of results to display.
-        // The total results count does not take into consideration the LIMIT clause of the query
-        // so we need to find the minimal value between the limit and the total results count.
-        $totalNumberOfResults = min(
-            self::RESULTS_LIMIT,
-            $response->getPage()->getResponseObject()->getTotalResultsCount()
-        );
-
-        // Extracts the results for the requested page.
-        $results = [];
-        foreach ($response->getPage()->getIterator() as $googleAdsRow) {
-            /** @var Google\Ads\GoogleAds\V14\Services\GoogleAdsRow $googleAdsRow */
-            // Converts each result as a Plain Old PHP Object (POPO) using JSON.
-            $results[] = json_decode($googleAdsRow->serializeToJsonString(), true);
-        }
-
-        // Creates a length aware paginator to supply a given page of results for the view.
-        $paginatedResults = new LengthAwarePaginator(
-            $results,
-            $totalNumberOfResults,
-            $entriesPerPage,
-            $pageNo,
-            ['path' => url('show-report')]
-        );
-
-        // Updates the session with the known page tokens to avoid unnecessary requests during
-        // future page navigation.
-        $request->session()->put('pageTokens', $pageTokens);
-
-        $json['paginatedResults'] = $paginatedResults;
-        $json['selectedFields'] = $selectedFields;
 
         return response()->JSON([
             'result' => $json
@@ -215,41 +206,47 @@ class GoogleAdsApiController extends Controller
     /**
      * Controls a POST request api.
      *
-     * @param Request $request the HTTP request
+     * @param CampaignRequest $request the HTTP request
      * @param GoogleAdsClientService $gadsClient the Google Ads API client
      * @param int $customerId
      * @param int $campaignId
      * @return JSON the json to redirect to after processing
      */
     public function pauseCampaignAction(
-        Request $request,
+        CampaignRequest $request,
         GadClient $gadsClient,
         int $customerId,
         int $campaignId
     ) {
-        $campaignResourceName = $gadsClient->pauseCampaign($customerId, $campaignId);
-        
-        // Builds the GAQL query to retrieve more information about the now paused campaign.
-        $query = sprintf(
-            "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
-            "WHERE campaign.resource_name = '%s' LIMIT 1",
-            $campaignResourceName
-        );
-        // Searches the result.
-        $response = $gadsClient->searchReport(
-            $customerId,
-            $query
-        );
-
-        // Fetches and converts the result as a POPO using JSON.
-        $campaign = json_decode(
-            $response->iterateAllElements()->current()->getCampaign()->serializeToJsonString(),
-            true
-        );
-
         $json['customerId'] = $customerId;
-        $json['campaign'] = $campaign;
 
+        try {
+            $campaignResourceName = $gadsClient->pauseCampaign($customerId, $campaignId);
+        
+            // Builds the GAQL query to retrieve more information about the now paused campaign.
+            $query = sprintf(
+                "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
+                "WHERE campaign.resource_name = '%s' LIMIT 1",
+                $campaignResourceName
+            );
+            
+            // Searches the result.
+            $response = $gadsClient->searchReport(
+                $customerId,
+                $query
+            );
+
+            // Fetches and converts the result as a POPO using JSON.
+            $campaign = json_decode(
+                $response->iterateAllElements()->current()->getCampaign()->serializeToJsonString(),
+                true
+            );
+
+            $json['campaign'] = $campaign;
+        } catch (\Exception $e) {
+            $json['errors']['ER_001'] = $e->getMessage();
+        }
+        
         return response()->JSON([
             'result' => $json
         ]);
@@ -258,31 +255,26 @@ class GoogleAdsApiController extends Controller
     /**
      * Controls a POST request api.
      *
-     * @param Request $request the HTTP request
+     * @param CampaignRequest $request the HTTP request
      * @param GoogleAdsClientService $gadsClient the Google Ads API client
      * @param int $customerId
      * @param int $campaignId
      * @return JSON the json to redirect to after processing
      */
     public function deleteCampaignAction(
-        Request $request,
+        CampaignRequest $request,
         GadClient $gadsClient,
         int $customerId,
         int $campaignId
     ) {
-        // Retrieves the form inputs.
-        $customerId = $request->input('customerId')??0;
-        $campaignId = $request->input('campaignId')??0;
-
-        if ($request->input('test') || ($customerId == 0)) {
-            $json['customerId'] = 1112223344;
-            $json['campaignName'] = 'Campaign name 1';
-        } 
-        
         if ($request->method() === 'POST') {
             $json['customerId'] = $customerId;
-            $removedCampaign = $gadsClient->deleteCampaign($customerId, $campaignId);
-            $json['campaignName'] = $removedCampaign->getResourceName();
+            try {
+                $removedCampaign = $gadsClient->deleteCampaign($customerId, $campaignId);
+                $json['campaignName'] = $removedCampaign->getResourceName();
+            } catch (\Exception $e) {
+                $json['errors']['ER_001'] = $e->getMessage();
+            }
         }
 
         return response()->JSON([
