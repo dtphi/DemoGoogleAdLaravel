@@ -25,6 +25,14 @@ class GoogleAdsClientService
 
     private const NUMBER_OF_CAMPAIGNS_TO_ADD = 1;
 
+    private static $valueToName = [
+        CampaignStatus::UNSPECIFIED => 'UNSPECIFIED',
+        CampaignStatus::UNKNOWN => 'UNKNOWN',
+        CampaignStatus::ENABLED => 'ENABLED',
+        CampaignStatus::PAUSED => 'PAUSED',
+        CampaignStatus::REMOVED => 'REMOVED',
+    ];
+
     public function getInstance()
     {
         if ($this->gadsClient == null) {
@@ -83,7 +91,7 @@ class GoogleAdsClientService
      * @param string $pageToken
      * @return object $response
      */
-    public function searchReport(int $customerId, string $query, ?int $entriesPerPage, ?string $pageToken):object
+    public function searchReport(int $customerId, string $query, ?int $entriesPerPage = 0, ?string $pageToken = ''):object
     {
         if (!empty($pageToken)) {
             return $this->getInstance()->getGoogleAdsServiceClient()->search(
@@ -106,6 +114,69 @@ class GoogleAdsClientService
             $customerId,
             $query
         );
+    }
+
+    /**
+     * @param int $customerId
+     * @param int $campaignId
+     */
+    public function searchCampaign(int $customerId, int $campaignId):object
+    {
+        //$resourceName = ResourceNames::forCampaign($customerId, $campaignId);
+        $campaignResourceName = sprintf(
+            "customers/%d/campaigns/%d",
+            $customerId,
+            $campaignId
+        );
+
+        $query = sprintf(
+            "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
+            "WHERE campaign.resource_name = '%s' LIMIT 1",
+            $campaignResourceName
+        );
+
+        return $this->getInstance()->getGoogleAdsServiceClient()->search(
+            $customerId,
+            $query
+        );
+    }
+
+    /**
+     * Update status for the campaign in the specified client account.
+     *
+     * @param int $customerId
+     * @param int $campaignId
+     * @param string $campaignName
+     * @param string $campaignStatus
+     * @return string $resourceName
+     */
+    public function updateCampaign(int $customerId, int $campaignId, string $campaignName, string $campaignStatus):string
+    {
+        // Deducts the campaign resource name from the given IDs.
+        $campaignResourceName = ResourceNames::forCampaign($customerId, $campaignId);
+
+        // Creates a campaign object and sets its status to PAUSED.
+        $campaign = new Campaign();
+        $campaign->setResourceName($campaignResourceName);
+        $campaign->setName($campaignName);
+        if (in_array($campaignStatus, self::$valueToName)) {
+            $campaign->setStatus(CampaignStatus::value($campaignStatus));
+        }
+
+        // Constructs an operation that will pause the campaign with the specified resource
+        // name, using the FieldMasks utility to derive the update mask. This mask tells the
+        // Google Ads API which attributes of the campaign need to change.
+        $campaignOperation = new CampaignOperation();
+        $campaignOperation->setUpdate($campaign);
+        $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
+
+        // Issues a mutate request to pause the campaign.
+        $this->getInstance()->getCampaignServiceClient()->mutateCampaigns(
+            $customerId,
+            [$campaignOperation]
+        );
+
+        return $campaignResourceName;
     }
 
     /**
@@ -242,10 +313,15 @@ class GoogleAdsClientService
 
         $data = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
-            $data[] = [
-                'id' => $googleAdsRow->getCampaign()->getId(),
-                'name' => $googleAdsRow->getCampaign()->getName()
-            ];
+            $status = $googleAdsRow->getCampaign()->getStatus();
+            if ($status == CampaignStatus::REMOVED) {
+            } else {
+                $data[] = [
+                    'id' => $googleAdsRow->getCampaign()->getId(),
+                    'name' => $googleAdsRow->getCampaign()->getName(),
+                    'status' => $status
+                ];
+            }
         }
 
         return $data;

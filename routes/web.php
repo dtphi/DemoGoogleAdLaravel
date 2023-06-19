@@ -31,12 +31,17 @@ Route::get(
     'get-campaign',
     [GoogleAdsApiController::class, 'getCampaignAction']
 );
+Route::post(
+    'update-campaign',
+    [GoogleAdsApiController::class, 'updateCampaignAction']
+);
 Route::match(
     ['get', 'post'],
     'delete-campaign',
     [GoogleAdsApiController::class, 'deleteCampaignAction']
 );
-Route::post(
+Route::match(
+    ['get', 'post'],
     'pause-campaign',
     [GoogleAdsApiController::class, 'pauseCampaignAction']
 );

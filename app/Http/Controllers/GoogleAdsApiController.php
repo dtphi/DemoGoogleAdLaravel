@@ -38,9 +38,10 @@ class GoogleAdsApiController extends Controller
         GadClient $gadsClient
     ) {
         $customerId = $request->input('customerId');
+        $data['customerId'] = $customerId;
 
         // Creates a query that retrieves all campaigns.
-        $query = 'SELECT campaign.id, campaign.name FROM campaign ORDER BY campaign.id';
+        $query = 'SELECT campaign.id, campaign.name, campaign.resource_name, campaign.status FROM campaign ORDER BY campaign.id';
 
         $response = $gadsClient->getCampaign($customerId, $query);
         $data['campaigns'] = $response;
@@ -68,6 +69,50 @@ class GoogleAdsApiController extends Controller
 
         return view(
             'create-result', ['data' => $data]
+        );
+    }
+
+    /**
+     * Controls a POST request submitted in the context of the "Update Campaign" form.
+     *
+     * @param Request $request the HTTP request
+     * @param GoogleAdsClientService $gadsClient the Google Ads API client
+     * @return View the view to redirect to after processing
+     */
+    public function updateCampaignAction(
+        Request $request,
+        GadClient $gadsClient
+    ) {
+        // Retrieves the form inputs.
+        $customerId = $request->input('customerId');
+        $campaignId = $request->input('campaignId');
+        $campaignName = $request->input('campaignName');
+        $campaignStatus = $request->input('campaignStatus');
+
+        if ($request->method() === 'POST') {
+            try {
+                $campaignResourceName = $gadsClient->updateCampaign($customerId, $campaignId, $campaignName, $campaignStatus);
+            } catch (\Exception $e) {
+                return redirect('/get-campaign/?customerId=' . $customerId);
+            }
+
+            return redirect('/get-campaign/?customerId=' . $customerId);
+        } else {
+            $customerId = (int)$request->get('customerId');
+            $campaignId = (int)$request->get('campaignId');
+
+            $response = $gadsClient->searchCampaign($customerId, $campaignId);
+        }
+
+        // Fetches and converts the result as a POPO using JSON.
+        $campaign = json_decode(
+            $response->iterateAllElements()->current()->getCampaign()->serializeToJsonString(),
+            true
+        );
+
+        return view(
+            'pause-result',
+            compact('customerId', 'campaign')
         );
     }
 
@@ -224,19 +269,26 @@ class GoogleAdsApiController extends Controller
         $customerId = $request->input('customerId');
         $campaignId = $request->input('campaignId');
 
-        $campaignResourceName = $gadsClient->pauseCampaign($customerId, $campaignId);
-        
-        // Builds the GAQL query to retrieve more information about the now paused campaign.
-        $query = sprintf(
-            "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
-            "WHERE campaign.resource_name = '%s' LIMIT 1",
-            $campaignResourceName
-        );
-        // Searches the result.
-        $response = $gadsClient->searchReport(
-            $customerId,
-            $query
-        );
+        if ($request->method() === 'POST') {
+            $campaignResourceName = $gadsClient->pauseCampaign($customerId, $campaignId);
+            // Builds the GAQL query to retrieve more information about the now paused campaign.
+            $query = sprintf(
+                "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
+                "WHERE campaign.resource_name = '%s' LIMIT 1",
+                $campaignResourceName
+            );
+
+            // Searches the result.
+            $response = $gadsClient->searchReport(
+                $customerId,
+                $query
+            );
+        } else {
+            $customerId = (int)$request->get('customerId');
+            $campaignId = (int)$request->get('campaignId');
+
+            $response = $gadsClient->searchCampaign($customerId, $campaignId);
+        }
 
         // Fetches and converts the result as a POPO using JSON.
         $campaign = json_decode(

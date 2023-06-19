@@ -1,0 +1,33 @@
+{
+    "message": "Request contains an invalid argument.",
+    "code": 3,
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.ads.googleads.v14.errors.GoogleAdsFailure",
+        "errors": [
+          {
+            "errorCode": {
+              "requestError": "INVALID_ENUM_VALUE"
+            },
+            "message": "Enum value 'REMOVED' cannot be used.",
+            "location": {
+              "fieldPathElements": [
+                {
+                  "fieldName": "operations",
+                  "index": 0
+                },
+                {
+                  "fieldName": "update"
+                },
+                {
+                  "fieldName": "status"
+                }
+              ]
+            }
+          }
+        ],
+        "requestId": "LW2uTl4Rvb_R8Sz0YUEs0g"
+      }
+    ]
+  }
