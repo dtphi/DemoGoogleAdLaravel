@@ -40,8 +40,12 @@ Route::post(
     [GoogleAdsApiController::class, 'createCampaignAction']
 );
 Route::post(
-    '/v1/pause-campaign/{customerId}/{$campaignId}',
+    '/v1/pause-campaign/{customerId}/{campaignId}',
     [GoogleAdsApiController::class, 'pauseCampaignAction']
+);
+Route::post(
+    '/v1/delete-campaign/{customerId}/{campaignId}',
+    [GoogleAdsApiController::class, 'deleteCampaignAction']
 );
 Route::match(
     ['get', 'post'],

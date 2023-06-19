@@ -31,7 +31,8 @@ Route::get(
     'get-campaign',
     [GoogleAdsApiController::class, 'getCampaignAction']
 );
-Route::get(
+Route::match(
+    ['get', 'post'],
     'delete-campaign',
     [GoogleAdsApiController::class, 'deleteCampaignAction']
 );
