@@ -15,14 +15,20 @@ class UserController extends Controller
 
     /**
      * Get users api.
-     * 
+     *
      * @param Request $request
      */
     public function index(Request $request)
     {
         $repository = $this->uSv->userRepository();
 
-        return response()->JSON($repository->testData());
+        $userAll = $repository->getListUserAll();
+
+        $json['data'] = $userAll;
+
+        return response()->JSON([
+            'result' => $json
+        ]);
     }
 
     public function store(UserRequest $request)

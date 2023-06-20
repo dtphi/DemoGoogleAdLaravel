@@ -24,4 +24,18 @@ final class UserRepository implements UserContact
   {
     return $this->user->insertDefault($userFields);
   }
+
+  public function getListUserAll()
+  {
+    $userList = [];
+    $collection = $this->user->all();
+    foreach ($collection as $user) {
+        $userList[] = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email
+        ];
+    }
+    return $userList;
+  }
 }

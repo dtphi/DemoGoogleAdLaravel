@@ -1,7 +1,10 @@
 ## Run the application by terminal
 - $ cd LaravelSampleApp
+- $ cp .env.example .env
 - $ composer install
 - $ ./vendor/bin/sail up -d
+- $ ./vendor/bin/sail artisan migrate
+- $ ./vendor/bin/sail artisan db:seed
 
 ## Alias sail
 - $ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
@@ -15,6 +18,7 @@
 
 ## Test
 - $ sail artisan migrate --env=testing
+- $ sail artisan db:seed --env=testing
 - $ sail artisan passport:client --personal --env=testing
 - $ sail artisan test --testsuite=Feature
 
