@@ -22,13 +22,7 @@ class UserController extends Controller
     {
         $repository = $this->uSv->userRepository();
 
-        $userAll = $repository->getListUserAll();
-
-        $json['data'] = $userAll;
-
-        return response()->JSON([
-            'result' => $json
-        ]);
+        return $repository->getListUserAll();
     }
 
     public function store(UserRequest $request)

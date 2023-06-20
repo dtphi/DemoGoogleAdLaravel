@@ -4,6 +4,7 @@ namespace App\Repositories\Api\Users;
 
 use App\Repositories\Api\Contacts\Users\UserContact;
 use App\Models\Contacts\UserContact as UserModel;
+use App\Http\Resources\Users\UserCollection;
 
 final class UserRepository implements UserContact
 {
@@ -27,15 +28,6 @@ final class UserRepository implements UserContact
 
   public function getListUserAll()
   {
-    $userList = [];
-    $collection = $this->user->all();
-    foreach ($collection as $user) {
-        $userList[] = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email
-        ];
-    }
-    return $userList;
+    return new UserCollection($this->user->all());
   }
 }

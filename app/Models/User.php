@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Models\Contacts\UserContact;
-use Illuminate\Support\Facades\Hash;
 use Carbon;
 
 class User extends Authenticatable implements UserContact
@@ -62,7 +61,7 @@ class User extends Authenticatable implements UserContact
             'email' => $user['email'],
             'password' => $user['password']
         ]);
-        
+
         return $result;
     }
 }
