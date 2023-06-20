@@ -66,7 +66,7 @@ class GoogleAdsClientService
             ->withClientId($gadsConfig['OAUTH2']['clientId'])
             ->withClientSecret($gadsConfig['OAUTH2']['clientSecret'])
             ->withRefreshToken($gadsConfig['OAUTH2']['refreshToken']);
-        
+
         // Generate a refreshable OAuth2 credential for authentication.
         $oAuth2Credential = $oAuth2Builder->build();
 
@@ -83,8 +83,26 @@ class GoogleAdsClientService
     }
 
     /**
+     * Get google ads client login.
+     */
+    private function loginFromConfig()
+    {
+        $config = $this->configuration();
+
+        $oAuth2Credential = (new OAuth2TokenBuilder())
+            ->from($config)
+            ->build();
+        $googleAdsClient = (new GoogleAdsClientBuilder())
+            ->from($config)
+            ->withOAuth2Credential($oAuth2Credential)
+            ->build();
+
+        return $googleAdsClient;
+    }
+
+    /**
      * Search report in the specified client account.
-     * 
+     *
      * @param int $customerId
      * @param string $query
      * @param int $entriesPerPage
@@ -181,7 +199,7 @@ class GoogleAdsClientService
 
     /**
      * Update status for the campaign in the specified client account.
-     * 
+     *
      * @param int $customerId
      * @param int $campaignId
      * @return string $resourceName
@@ -214,7 +232,7 @@ class GoogleAdsClientService
 
     /**
      * Create a new campaign in the specified client account.
-     * 
+     *
      * @param int $customerId
      * @param int $numberAdd
      * @return array $data
@@ -300,7 +318,7 @@ class GoogleAdsClientService
 
     /**
      * Get the campaigns in the specified client account.
-     * 
+     *
      * @param int $customerId
      * @param string $query
      * @return array $data
@@ -329,7 +347,7 @@ class GoogleAdsClientService
 
     /**
      * Delete the campaigns in the specified client account.
-     * 
+     *
      * @param int $customerId
      * @param int $campaignId
      * @return object $removedCampaign

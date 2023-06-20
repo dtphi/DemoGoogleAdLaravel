@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\View\View;
 use App\Services\GoogleAds\GoogleAdsClientService as GadClient;
 use App\Http\Requests\GoogleAds\CampaignRequest;
 
 class GoogleAdsApiController extends Controller
 {
-    private const CUSTOMER_ID = '1986165192';
-
     private static $REPORT_TYPE_TO_DEFAULT_SELECTED_FIELDS = [
         'campaign' => ['campaign.id', 'campaign.name', 'campaign.status'],
         'customer' => ['customer.id']
@@ -33,7 +29,6 @@ class GoogleAdsApiController extends Controller
      * @return JSON the json to redirect to after processing
      */
     public function getCampaignAction(
-        CampaignRequest $request,
         int $customerId
     ) {
         $gadsClient = $this->gadSv;
@@ -83,6 +78,49 @@ class GoogleAdsApiController extends Controller
                 $json['errors']['ER_001'] = $e->getMessage();
             }
         }
+
+        return response()->JSON([
+            'result' => $json
+        ]);
+    }
+
+    /**
+     * Controls a POST request submitted in the context of the "Update Campaign" form.
+     *
+     * @param CampaignRequest $request the HTTP request
+     * @param int $customerId
+     * @param int $campaignId
+     * @return Json the json to redirect to after processing
+     */
+    public function updateCampaignAction(
+        CampaignRequest $request,
+        int $customerId,
+        int $campaignId
+    ) {
+        // Retrieves the form inputs.
+        $campaignName = $request->input('campaignName');
+        $campaignStatus = $request->input('campaignStatus');
+
+        try {
+            $campaignResourceName = $this->gadSv->updateCampaign(
+                $customerId,
+                $campaignId,
+                $campaignName,
+                $campaignStatus
+            );
+            $json['campaignResourceName'] = $campaignResourceName;
+
+        } catch (\Exception $e) {
+            $json['errors']['ER_001'] = $e->getMessage();
+        }
+
+        $response = $this->gadSv->searchCampaign($customerId, $campaignId);
+
+        // Fetches and converts the result as a POPO using JSON.
+        $json['campaign'] = json_decode(
+            $response->iterateAllElements()->current()->getCampaign()->serializeToJsonString(),
+            true
+        );
 
         return response()->JSON([
             'result' => $json
@@ -147,7 +185,7 @@ class GoogleAdsApiController extends Controller
         while (count($pageTokens) < $pageNo) {
             // Fetches the next unknown page.
             $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, end($pageTokens));
-            
+
             if ($response->getPage()->getNextPageToken()) {
                 // Stores the page token of the page that comes after the one we just fetched if
                 // any so that it can be reused later if necessary.
@@ -161,7 +199,7 @@ class GoogleAdsApiController extends Controller
         try {
             // Fetches the actual page that we want to display the results of.
             $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, $pageTokens[$pageNo - 1]);
-            
+
             if ($response->getPage()->getNextPageToken()) {
                 // Stores the page token of the page that comes after the one we just fetched if any so
                 // that it can be reused later if necessary.
@@ -219,7 +257,6 @@ class GoogleAdsApiController extends Controller
      * @return JSON the json to redirect to after processing
      */
     public function pauseCampaignAction(
-        CampaignRequest $request,
         int $customerId,
         int $campaignId
     ) {
@@ -229,14 +266,14 @@ class GoogleAdsApiController extends Controller
 
         try {
             $campaignResourceName = $gadsClient->pauseCampaign($customerId, $campaignId);
-        
+
             // Builds the GAQL query to retrieve more information about the now paused campaign.
             $query = sprintf(
                 "SELECT campaign.id, campaign.name, campaign.status FROM campaign " .
                 "WHERE campaign.resource_name = '%s' LIMIT 1",
                 $campaignResourceName
             );
-            
+
             // Searches the result.
             $response = $gadsClient->searchReport(
                 $customerId,
@@ -253,7 +290,7 @@ class GoogleAdsApiController extends Controller
         } catch (\Exception $e) {
             $json['errors']['ER_001'] = $e->getMessage();
         }
-        
+
         return response()->JSON([
             'result' => $json
         ]);

@@ -9,8 +9,6 @@ use App\Services\GoogleAds\GoogleAdsClientService as GadClient;
 
 class GoogleAdsApiController extends Controller
 {
-    private const CUSTOMER_ID = '1986165192';
-
     private static $REPORT_TYPE_TO_DEFAULT_SELECTED_FIELDS = [
         'campaign' => ['campaign.id', 'campaign.name', 'campaign.status'],
         'customer' => ['customer.id']
@@ -197,7 +195,7 @@ class GoogleAdsApiController extends Controller
         while (count($pageTokens) < $pageNo) {
             // Fetches the next unknown page.
             $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, end($pageTokens));
-            
+
             if ($response->getPage()->getNextPageToken()) {
                 // Stores the page token of the page that comes after the one we just fetched if
                 // any so that it can be reused later if necessary.
@@ -211,7 +209,7 @@ class GoogleAdsApiController extends Controller
 
         // Fetches the actual page that we want to display the results of.
         $response = $gadsClient->searchReport($customerId, $query, $entriesPerPage, $pageTokens[$pageNo - 1]);
-        
+
         if ($response->getPage()->getNextPageToken()) {
             // Stores the page token of the page that comes after the one we just fetched if any so
             // that it can be reused later if necessary.
@@ -320,8 +318,8 @@ class GoogleAdsApiController extends Controller
         if ($request->input('test') || ($customerId == 0)) {
             $data['customerId'] = 1112223344;
             $data['campaignName'] = 'Campaign name 1';
-        } 
-        
+        }
+
         if ($request->method() === 'POST') {
             $data['customerId'] = $customerId;
             $removedCampaign = $gadsClient->deleteCampaign($customerId, $campaignId);
