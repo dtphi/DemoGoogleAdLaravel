@@ -16,6 +16,14 @@
 ## Api personal accesstoken by cammand
 - $ sail artisan passport:client --personal
 
+## Api Swagger documentation url
+- Generate documentation run cammand
+- $ php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+- $ sail artisan l5-swagger:generate
+
+- Access by url browser
+- {hostUrl}/api/documentation
+
 ## Test
 - $ sail artisan migrate --env=testing
 - $ sail artisan db:seed --env=testing

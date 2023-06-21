@@ -1,0 +1,81 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Sample swargger application",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/user-login": {
+            "post": {
+                "tags": [
+                    "UserLogin"
+                ],
+                "summary": "User Login Api",
+                "description": "User Login here",
+                "operationId": "UserLogin",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "schema": "Result",
+                                "title": "Sample schema for using references",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "password"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "test.user@example.com",
+                                    "password": "password"
+                                }
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Response successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Response successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "passport": {
+                "type": "oauth2",
+                "description": "Laravel passport oauth2 security.",
+                "in": "header",
+                "scheme": "https",
+                "flows": {
+                    "password": {
+                        "authorizationUrl": "http://laravelsampleapp.test/oauth/authorize",
+                        "tokenUrl": "http://laravelsampleapp.test/oauth/token",
+                        "refreshUrl": "http://laravelsampleapp.test/token/refresh",
+                        "scopes": []
+                    }
+                }
+            }
+        }
+    }
+}
