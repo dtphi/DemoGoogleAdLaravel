@@ -63,15 +63,15 @@
     "components": {
         "securitySchemes": {
             "passport": {
-                "type": "oauth2",
+                "type": "apiKey",
                 "description": "Laravel passport oauth2 security.",
                 "in": "header",
                 "scheme": "https",
                 "flows": {
                     "password": {
-                        "authorizationUrl": "http://laravelsampleapp.test/oauth/authorize",
-                        "tokenUrl": "http://laravelsampleapp.test/oauth/token",
-                        "refreshUrl": "http://laravelsampleapp.test/token/refresh",
+                        "authorizationUrl": "http://localhost/oauth/authorize",
+                        "tokenUrl": "http://localhost/oauth/token",
+                        "refreshUrl": "http://localhost/token/refresh",
                         "scopes": []
                     }
                 }

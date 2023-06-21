@@ -85,3 +85,18 @@
  * 	)
  * )
  */
+
+
+// athor
+Which user ID should the client be assigned to? (Optional):
+ > 3
+
+ What should we name the client?:
+ > Swagger Client
+
+ Where should we redirect the request after authorization? [http://localhost/auth/callback]:
+ > http://localhost/api/oauth2-callback
+
+New client created successfully.
+Client ID: 997669e0-95fa-45c3-9281-c7ec17c34633
+Client secret: JF9DfwXXS1iZtlWbhGpnCYaNIAYIhguESfHONocM
