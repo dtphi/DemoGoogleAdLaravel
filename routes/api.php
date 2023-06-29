@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\GoogleAdsApiController;
 |
 */
 // sail composer dumpautoload
+Route::get('/v1/test-api', [UserController::class, 'index']);
 Route::post('/v1/user-login', [UserLogin::class, 'login'])->name('login');
 Route::middleware('auth:api')->get('/v1/user', function () {
     return response()->json([
